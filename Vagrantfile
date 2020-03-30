@@ -1,6 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-# adoped from https://github.com/hashicorp/consul/blob/master/demo/vagrant-cluster/Vagrantfile
+# adapted from https://github.com/hashicorp/consul/blob/master/demo/vagrant-cluster/Vagrantfile
 
 $script = <<SCRIPT
 
