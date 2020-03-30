@@ -1,11 +1,12 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+# adoped from https://github.com/hashicorp/consul/blob/master/demo/vagrant-cluster/Vagrantfile
 
 $script = <<SCRIPT
 
 echo "Installing dependencies ..."
 sudo apt-get update
-sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common unzip jq dnsutils
 
 echo "Adding Docker repository ..."
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -14,6 +15,22 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 echo "Installing Docker ..."
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+echo "Determining Consul version to install ..."
+CHECKPOINT_URL="https://checkpoint-api.hashicorp.com/v1/check"
+CONSUL_VERSION=$(curl -s "${CHECKPOINT_URL}"/consul | jq .current_version | tr -d '"')
+
+echo "Fetching Consul version ${CONSUL_VERSION} ..."
+cd /tmp/
+curl -s https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip -o consul.zip
+
+echo "Installing Consul version ${CONSUL_VERSION} ..."
+unzip consul.zip
+sudo chmod +x consul
+sudo mv consul /usr/bin/consul
+
+sudo mkdir /etc/consul.d
+sudo chmod a+w /etc/consul.d
 
 SCRIPT
 
